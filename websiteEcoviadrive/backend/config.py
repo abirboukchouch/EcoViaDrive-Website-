@@ -2,6 +2,6 @@
 DB_CONFIG = {
     "host": "localhost",
     "user": "boukchouchabir",
-    "password": "mKjb756A..:Z63..:",
+    "password": "xxxxxxxxxx",
     "database": "ecoviadrive"
 }
