@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoViaDrive | Premium Car Rentals in Morocco</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Main website header with navigation -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="site-name">EcoViaDrive</a>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="partners.html">partners</a></li>
+                        <li><a href="search.html" class="active">Book Now</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero banner section with main search heading -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Find Your Perfect Vehicle</h1>
+                <p class="hero-tagline">Browse our selection of premium vehicles available at EcoViaDrive Office</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main search section containing filters and results -->
+    <section class="search-section">
+        <div class="container">
+            <!-- Search filters form -->
+            <div class="search-filters">
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label for="pickup-location">Pickup Location</label>
+                        <select id="pickup-location">
+                            <option value="Essaouira">Essaouira</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="pickup-date">Pickup Date</label>
+                        <input type="date" id="pickup-date" required>
+                    </div>
+                    <div class="filter-group">
+                        <label for="return-date">Return Date</label>
+                        <input type="date" id="return-date" required>
+                    </div>
+                    <div class="filter-group">
+                        <label for="vehicle-type">Vehicle Type</label>
+                        <select id="vehicle-type">
+                            <option value="">All Types</option>
+                            <option value="HATCHBACK">HATCHBACK</option>
+                            <option value="SEDAN">Sedan</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-primary search-btn" onclick="searchVehicles()">
+                    <i class="fas fa-search"></i> Search Vehicles
+                </button>
+            </div>
+
+            <!-- Results display area -->
+            <div class="results-section">
+                <div class="results-header">
+                    <h2>Available Vehicles</h2>
+                    <div class="results-count" id="results-count">Loading...</div>
+                    <div class="sort-options">
+                        <select id="sort-select" onchange="sortVehicles()">
+                            <option value="recommended">Sort by: Recommended</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="vehicle-showcase" id="vehicle-showcase">
+                    <div class="loading">Loading available vehicles...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Website footer with contact info and links -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>EcoViaDrive</h3>
+                    <p>Morocco's innovative car rental platform connecting travelers with trusted local providers while supporting community initiatives.</p>
+                    <div class="social-links">
+                        <a href="https://facebook.com/ecoviadrivecars" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://instagram.com/ecoviadrivecars" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/212639927999" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="partners.html">partners</a></li>
+                        <li><a href="search.html">Book a Vehicle</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact Information</h3>
+                    <address>
+                        <p><i class="fas fa-map-marker-alt"></i> EcoViaDrive Office, Technopark Essaouira</p>
+                        <p><i class="fas fa-phone-alt"></i> +212 639-927999</p>
+                        <p><i class="fas fa-envelope"></i> hello@EcoViaDrive.ma</p>
+                        <p><i class="fas fa-clock"></i> 24/7 Customer Support</p>
+                    </address>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>© 2025 EcoViaDrive. All rights reserved. Proudly supporting Moroccan communities.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let currentVehicles = [];
+        const API_BASE_URL = 'http://localhost:5000'; // Backend API base URL
+        const DEFAULT_DAILY_RATE = 250; // Default price 
+
+        /**
+         * Initialize the page with default dates and perform initial search
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default dates 
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            const returnDate = new Date(today);
+            returnDate.setDate(returnDate.getDate() + 3);
+
+            document.getElementById('pickup-date').valueAsDate = tomorrow;
+            document.getElementById('return-date').valueAsDate = returnDate;
+
+            searchVehicles();
+        });
+
+        /**
+         * Search for available vehicles based on selected filters
+         * Fetches data from backend API and displays results
+         */
+        async function searchVehicles() {
+            const city = document.getElementById('pickup-location').value;
+            const startDate = document.getElementById('pickup-date').value;
+            const endDate = document.getElementById('return-date').value;
+            const vehicleType = document.getElementById('vehicle-type').value;
+
+            // Validate dates
+            if (!startDate || !endDate) {
+                alert('Please select both pickup and return dates');
+                return;
+            }
+
+            if (new Date(startDate) >= new Date(endDate)) {
+                alert('Return date must be after pickup date');
+                return;
+            }
+
+            const showcase = document.getElementById('vehicle-showcase');
+            const resultsCount = document.getElementById('results-count');
+            
+            // Show loading state
+            showcase.innerHTML = '<div class="loading">Searching for available vehicles...</div>';
+            resultsCount.textContent = 'Searching...';
+
+            try {
+                // Fetch available vehicles from API
+                const url = `${API_BASE_URL}/availability?city=${encodeURIComponent(city)}&start=${startDate}&end=${endDate}`;
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                let vehicles = data.available_vehicles || [];
+
+                // Filter by vehicle type if specified
+                if (vehicleType) {
+                    vehicles = vehicles.filter(vehicle => vehicle.type === vehicleType);
+                }
+
+                currentVehicles = vehicles;
+                displayVehicles(vehicles);
+                updateResultsCount(vehicles.length);
+
+            } catch (error) {
+                console.error('Search error:', error);
+                showcase.innerHTML = `<div class="error">Error loading vehicles: ${error.message}<br><small>Make sure your backend server is running on port 5000</small></div>`;
+                resultsCount.textContent = 'Error';
+            }
+        }
+
+        /**
+         * Display vehicles in the showcase area
+         * @param {Array} vehicles - Array of vehicle objects to display
+         */
+        function displayVehicles(vehicles) {
+            const showcase = document.getElementById('vehicle-showcase');
+            
+            if (!vehicles || vehicles.length === 0) {
+                showcase.innerHTML = '<div class="no-vehicles">No vehicles available for the selected dates and criteria</div>';
+                return;
+            }
+
+            showcase.innerHTML = '';
+
+            // Create a card for each vehicle
+            vehicles.forEach(vehicle => {
+                const vehicleCard = document.createElement('div');
+                vehicleCard.className = 'vehicle-card';
+                const specs = getVehicleSpecs(vehicle);
+                
+                vehicleCard.innerHTML = `
+                    <div class="vehicle-badge">${vehicle.type || 'CAR'}</div>
+                    <div class="vehicle-image">
+                        <img src="${vehicle.image_url || 'images/default-car.jpg'}" 
+                             alt="${vehicle.make} ${vehicle.model}" 
+                             onerror="this.src='images/default-car.jpg'">
+                    </div>
+                    <div class="vehicle-details">
+                        <h3>${vehicle.make} ${vehicle.model} (${vehicle.year})</h3>
+                        <div class="vehicle-specs">
+                            <div class="spec-item">
+                                <i class="fas fa-users"></i> ${specs.seats} Seats
+                            </div>
+                            <div class="spec-item">
+                                <i class="fas fa-gas-pump"></i> ${specs.fuel}
+                            </div>
+                            <div class="spec-item">
+                                <i class="fas fa-cogs"></i> ${specs.transmission}
+                            </div>
+                        </div>
+                        <div class="price-action">
+                            <div class="price">${vehicle.daily_rate || DEFAULT_DAILY_RATE} <small>MAD/day</small></div>
+                            <button class="book-btn" onclick="bookVehicle(${vehicle.id})">Book Now</button>
+                        </div>
+                    </div>
+                `;
+                showcase.appendChild(vehicleCard);
+            });
+        }
+
+        /**
+         * Get specifications for a vehicle based on its type
+         * @param {Object} vehicle - Vehicle object
+         * @returns {Object} Specifications including seats, fuel type, and transmission
+         */
+        function getVehicleSpecs(vehicle) {
+            const specs = {
+                seats: 5,
+                fuel: 'Gasoline',
+                transmission: 'Manual'
+            };
+
+            // Adjust specs for specific vehicle types
+            if (vehicle.type === 'SEDAN') {
+                specs.transmission = 'Manual/Auto';
+            }
+
+            return specs;
+        }
+
+        /**
+         * Sort the currently displayed vehicles based on selected criteria
+         */
+        function sortVehicles() {
+            const sortValue = document.getElementById('sort-select').value;
+            
+            switch(sortValue) {
+                case 'price-low':
+                    currentVehicles.sort((a, b) => (a.daily_rate || DEFAULT_DAILY_RATE) - (b.daily_rate || DEFAULT_DAILY_RATE));
+                    break;
+                case 'price-high':
+                    currentVehicles.sort((a, b) => (b.daily_rate || DEFAULT_DAILY_RATE) - (a.daily_rate || DEFAULT_DAILY_RATE));
+                    break;
+                default:
+                    break;
+            }
+            
+            displayVehicles(currentVehicles);
+        }
+
+        /**
+         * Update the results count display
+         * @param {Number} count - Number of vehicles found
+         */
+        function updateResultsCount(count) {
+            const resultsCount = document.getElementById('results-count');
+            resultsCount.textContent = `${count} vehicle${count !== 1 ? 's' : ''} found`;
+        }
+
+        /**
+         * Initiate booking process for a specific vehicle
+         * @param {Number} vehicleId - ID of the vehicle to book
+         */
+        function bookVehicle(vehicleId) {
+            const pickupDate = document.getElementById('pickup-date').value;
+            const returnDate = document.getElementById('return-date').value;
+            const location = document.getElementById('pickup-location').value;
+
+            if (!pickupDate || !returnDate) {
+                alert('Please select pickup and return dates first');
+                return;
+            }
+
+            // Store booking data for the booking page
+            const bookingData = {
+                vehicleId: vehicleId,
+                pickupDate: pickupDate,
+                returnDate: returnDate,
+                location: location,
+                vehicle: currentVehicles.find(v => v.id == vehicleId)
+            };
+            
+            localStorage.setItem('bookingData', JSON.stringify(bookingData));
+            window.location.href = 'book.html';
+        }
+    </script>
+</body>
+</html>

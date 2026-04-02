@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation | EcoViaDrive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Main Navigation Header -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="../index.html" class="site-name">EcoViaDrive</a>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="partners.html">Partners</a></li>
+                        <li><a href="search.html" class="btn btn-primary">Book Now</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Booking Confirmation Section -->
+    <section class="confirmation-section">
+        <div class="container">
+            <div class="confirmation-card">
+                <!-- Confirmation Icon (changes to spinner if no booking ID) -->
+                <div class="confirmation-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h1>Booking Confirmed!</h1>
+                <p>Thank you for choosing EcoViaDrive. Your booking reference is: <strong id="booking-id"></strong></p>
+                <p>We've sent a confirmation to your email address.</p>
+                <p>A portion of your booking will be donated to animal welfare initiatives in Morocco.</p>
+                <a href="../index.html" class="btn btn-primary" style="margin-top: 30px;">Back to Home</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Company Info Column -->
+                <div class="footer-col">
+                    <h3>EcoViaDrive</h3>
+                    <p>Morocco's innovative car rental platform connecting travelers with trusted local providers.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Quick Links Column -->
+                <div class="footer-col">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="partners.html">Partners</a></li>
+                        <li><a href="search.html">Book a Vehicle</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact Info Column -->
+                <div class="footer-col">
+                    <h3>Contact Information</h3>
+                    <address>
+                        <p><i class="fas fa-map-marker-alt"></i> Technopark Essaouira, Morocco</p>
+                        <p><i class="fas fa-phone-alt"></i> +212 639-927999</p>
+                        <p><i class="fas fa-envelope"></i> hello@EcoViaDrive.ma</p>
+                    </address>
+                </div>
+            </div>
+            
+            <!-- Copyright Notice -->
+            <div class="copyright">
+                <p>&copy; 2025 EcoViaDrive. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        /**
+         * Booking Confirmation Script
+         * Handles displaying the booking ID from URL parameters
+         * Shows processing state if no booking ID is found
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get booking ID from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookingId = urlParams.get('id');
+            
+            if (bookingId) {
+                // Display the booking confirmation
+                document.getElementById('booking-id').textContent = bookingId;
+            } else {
+                // Show processing state if no booking ID is found
+                document.querySelector('h1').textContent = 'Booking Processing';
+                document.querySelector('.confirmation-icon').className = 'confirmation-icon fas fa-spinner fa-spin';
+            }
+        });
+    </script>
+</body>
+</html>
